@@ -1,12 +1,25 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
 import bcrypt from 'bcryptjs';
+import { CreateUserDto, UpdateUserDto, UserResponse } from '../types/user.types';
+
+const toUserResponse = (user: any): UserResponse => ({
+  _id: user._id.toString(),
+  email: user.email,
+  full_name: user.full_name,
+  phone: user.phone,
+  address: user.address,
+  role: user.role,
+  createdAt: user.createdAt.toISOString(),
+  updatedAt: user.updatedAt.toISOString(),
+});
 
 // GET /api/users — Lấy danh sách tất cả người dùng
 export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const users = await User.find().select('-password');
-    res.status(200).json(users);
+    const response: UserResponse[] = users.map(toUserResponse);
+    res.status(200).json(response);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -20,7 +33,7 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
       res.status(404).json({ message: 'Không tìm thấy User' });
       return;
     }
-    res.status(200).json(user);
+    res.status(200).json(toUserResponse(user));
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -29,7 +42,8 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
 // POST /api/users — Tạo người dùng mới
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, password, full_name, phone, address } = req.body;
+    // ✅ Dùng CreateUserDto để typing req.body
+    const { email, password, full_name, phone, address } = req.body as CreateUserDto;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -47,14 +61,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     });
 
     const savedUser = await user.save();
-    res.status(201).json({
-      id: savedUser._id,
-      email: savedUser.email,
-      full_name: savedUser.full_name,
-      phone: savedUser.phone,
-      address: savedUser.address,
-      role: savedUser.role,
-    });
+    res.status(201).json(toUserResponse(savedUser));
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
@@ -63,16 +70,18 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 // PUT /api/users/:id — Cập nhật người dùng
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { password, ...updateData } = req.body;
+    // ✅ Dùng UpdateUserDto
+    const updateData = req.body as UpdateUserDto;
+    let finalUpdateData = { ...updateData };
 
-    if (password) {
+    if (updateData.password) {
       const salt = await bcrypt.genSalt(12);
-      updateData.password = await bcrypt.hash(password, salt);
+      finalUpdateData.password = await bcrypt.hash(updateData.password, salt);
     }
 
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      updateData,
+      finalUpdateData,
       { new: true, runValidators: true }
     ).select('-password');
 
@@ -81,7 +90,7 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    res.status(200).json(user);
+    res.status(200).json(toUserResponse(user));
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
