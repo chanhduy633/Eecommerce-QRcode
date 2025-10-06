@@ -4,9 +4,10 @@ import {
   CreateProductDto,
   UpdateProductDto,
   IProduct,
+  IProductDoc,
 } from "../types/productTypes";
 
-const toProductResponse = (product: any): IProduct => ({
+const toProductResponse = (product: IProductDoc): IProduct => ({
   _id: product._id.toString(),
   name: product.name,
   description: product.description || undefined,

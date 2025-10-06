@@ -1,3 +1,4 @@
+import { Document, Types } from 'mongoose';
 export interface IProduct {
   _id: string;
   name: string;
@@ -9,6 +10,19 @@ export interface IProduct {
   image_url?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IProductDoc extends Document {
+  _id: Types.ObjectId;
+  name: string;
+  description?: string;
+  price: number;
+  quantity: number;
+  stock: number;
+  sold: number;
+  image_url?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface CreateProductDto {

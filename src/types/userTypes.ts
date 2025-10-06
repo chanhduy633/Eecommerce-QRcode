@@ -1,3 +1,4 @@
+import { Document, Types } from "mongoose";
 // --- 1. Address (dùng trong User) ---
 export interface IAddress {
   street: string;
@@ -5,16 +6,17 @@ export interface IAddress {
   district: string;
   ward: string;
 }
+type UserRole =  'user'|'admin';
 
 // --- 2. Dữ liệu đầy đủ từ DB (có password) ---
 export interface IUserDocument {
-  _id: string;
+  _id:Types.ObjectId;
   email: string;
   password: string;  
   full_name: string;
   phone: string;
   address: IAddress;
-  role: 'user' | 'admin';
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -43,7 +45,7 @@ export interface UserResponse {
   full_name: string;
   phone: string;
   address: IAddress;
-  role: 'user' | 'admin';
+  role: UserRole;
   createdAt: string;
   updatedAt: string;
 }
