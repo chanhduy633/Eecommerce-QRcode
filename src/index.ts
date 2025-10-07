@@ -5,6 +5,9 @@ import authRoutes from './routes/authRoutes';
 import productRoutes from './routes/productRoutes'
 import userRoutes from './routes/userRoutes';
 import cors from 'cors';
+import uploadRoutes from "./routes/upload";
+import path from "path";
+
 
 dotenv.config();
 connectDB();
@@ -14,8 +17,16 @@ const app = express();
 const PORT = process.env.PORT ||5317;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173", 
+  credentials: true,
+}));
 
+app.use("/api/upload", uploadRoutes);
+app.use(
+  "/uploads",
+  express.static(path.join(process.cwd(), "uploads"))
+);
 
 app.use('/api/auth', authRoutes); 
 app.use("/api/users", userRoutes);
