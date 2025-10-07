@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IProductDoc } from '../types/productTypes';
+import { IProductDoc } from "../types/productTypes";
 const productSchema = new mongoose.Schema<IProductDoc>(
   {
     name: {
@@ -14,11 +14,9 @@ const productSchema = new mongoose.Schema<IProductDoc>(
       required: true,
       min: 0,
     },
-    quantity: {
-      type: Number,
+    category: {
+      type: String,
       required: true,
-      min: 0,
-      default: 0,
     },
     stock: {
       type: Number,

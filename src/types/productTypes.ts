@@ -1,10 +1,10 @@
-import { Document, Types } from 'mongoose';
+import { Document, Types } from "mongoose";
 export interface IProduct {
   _id: string;
   name: string;
   description?: string;
   price: number;
-  quantity: number;
+  category: string;
   stock: number;
   sold: number;
   image_url?: string;
@@ -17,7 +17,7 @@ export interface IProductDoc extends Document {
   name: string;
   description?: string;
   price: number;
-  quantity: number;
+  category: string;
   stock: number;
   sold: number;
   image_url?: string;
@@ -29,7 +29,7 @@ export interface CreateProductDto {
   name: string;
   description?: string;
   price: number;
-  quantity: number;
+  category: string;
   stock: number;
   image_url?: string;
 }

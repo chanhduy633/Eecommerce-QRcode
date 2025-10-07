@@ -12,7 +12,7 @@ const toProductResponse = (product: IProductDoc): IProduct => ({
   name: product.name,
   description: product.description || undefined,
   price: product.price,
-  quantity: product.quantity,
+  category: product.category,
   stock: product.stock,
   sold: product.sold,
   image_url: product.image_url || undefined,
