@@ -15,7 +15,7 @@ export interface IUserDocument {
   password: string;  
   full_name: string;
   phone: string;
-  address: IAddress;
+  address?: IAddress | null;
   role: UserRole;
   createdAt: Date;
   updatedAt: Date;
@@ -44,8 +44,26 @@ export interface UserResponse {
   email: string;
   full_name: string;
   phone: string;
-  address: IAddress;
+  address?: IAddress | null;
   role: UserRole;
   createdAt: string;
   updatedAt: string;
+}
+// ------------------ Repository ------------------
+export interface IUserRepository {
+  findAll(): Promise<IUserDocument[]>;
+  findById(id: string): Promise<IUserDocument | null>;
+  findByEmail(email: string): Promise<IUserDocument | null>;
+  create(data: CreateUserDto): Promise<IUserDocument>;
+  update(id: string, data: UpdateUserDto): Promise<IUserDocument | null>;
+  delete(id: string): Promise<IUserDocument | null>;
+}
+
+// ------------------ Service ------------------
+export interface IUserService {
+  getAll(): Promise<UserResponse[]>;
+  getById(id: string): Promise<UserResponse | null>;
+  create(data: CreateUserDto): Promise<UserResponse>;
+  update(id: string, data: UpdateUserDto): Promise<UserResponse | null>;
+  delete(id: string): Promise<boolean>;
 }

@@ -1,111 +1,79 @@
 import { Request, Response } from "express";
-import Product from "../models/Product";
-import {
-  CreateProductDto,
-  UpdateProductDto,
-  IProduct,
-  IProductDoc,
-} from "../types/productTypes";
+import { ProductRepository } from "../repositories/productRepository";
+import { ProductService } from "../services/productService";
+import { CreateProductDto, UpdateProductDto, IProduct } from "../types/productTypes";
 
-const toProductResponse = (product: IProductDoc): IProduct => ({
-  _id: product._id.toString(),
-  name: product.name,
-  description: product.description || undefined,
-  price: product.price,
-  category: product.category,
-  stock: product.stock,
-  sold: product.sold,
-  image_url: product.image_url || undefined,
-  createdAt: product.createdAt.toISOString(),
-  updatedAt: product.updatedAt.toISOString(),
-});
+const productRepository = new ProductRepository();
+const productService = new ProductService(productRepository);
 
-// GET /api/products — Lấy danh sách sản phẩm
-export const getAllProducts = async (
-  req: Request<any, IProduct[], any, any>,
-  res: Response<IProduct[]>
-): Promise<void> => {
-  try {
-    const products = await Product.find();
-    const response = products.map(toProductResponse);
-    res.status(200).json(response);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message } as any);
-  }
-};
+// Interface định nghĩa hợp đồng Controller
+export interface IProductController {
+  getAllProducts(req: Request, res: Response): Promise<void>;
+  getProductById(req: Request, res: Response): Promise<void>;
+  createProduct(req: Request, res: Response): Promise<void>;
+  updateProduct(req: Request, res: Response): Promise<void>;
+  deleteProduct(req: Request, res: Response): Promise<void>;
+}
 
-// GET /api/products/:id — Lấy chi tiết sản phẩm theo ID
-export const getProductById = async (
-  req: Request<{ id: string }, IProduct, any, any>,
-  res: Response<IProduct, any>
-): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const product = await Product.findById(id);
-    if (!product) {
-      res.status(404).json({ error: "Không tìm thấy sản phẩm" } as any);
-      return;
+// Triển khai Controller
+export const ProductController: IProductController = {
+  async getAllProducts(req, res): Promise<void> {
+    try {
+      const products = await productService.getAllProducts();
+      res.status(200).json(products);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
-    res.status(200).json(toProductResponse(product));
-  } catch (error: any) {
-    res.status(500).json({ error: error.message } as any);
-  }
-};
+  },
 
-// POST /api/products — Thêm sản phẩm mới
-export const createProduct = async (
-  req: Request<any, IProduct, CreateProductDto, any>,
-  res: Response<IProduct, any>
-): Promise<void> => {
-  try {
-    const productData = req.body as CreateProductDto;
-
-    const product = new Product(productData);
-    const savedProduct = await product.save();
-
-    res.status(201).json(toProductResponse(savedProduct));
-  } catch (error: any) {
-    res.status(400).json({ error: error.message } as any);
-  }
-};
-
-// PUT /api/products/:id — Cập nhật sản phẩm
-export const updateProduct = async (
-  req: Request<{ id: string }, IProduct, UpdateProductDto, any>,
-  res: Response<IProduct, any>
-): Promise<void> => {
-  try {
-    const updateData = req.body as UpdateProductDto;
-
-    const product = await Product.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!product) {
-      res.status(404).json({ error: "Không tìm thấy sản phẩm" } as any);
-      return;
+  async getProductById(req, res): Promise<void> {
+    try {
+      const product = await productService.getProductById(req.params.id);
+      if (!product) {
+        res.status(404).json({ error: "Không tìm thấy sản phẩm" });
+        return;
+      }
+      res.status(200).json(product);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
+  },
 
-    res.status(200).json(toProductResponse(product));
-  } catch (error: any) {
-    res.status(400).json({ error: error.message } as any);
-  }
-};
-
-// DELETE /api/products/:id — Xoá sản phẩm
-export const deleteProduct = async (
-  req: Request<{ id: string }, { message: string }, any, any>,
-  res: Response<{ message: string }>
-): Promise<void> => {
-  try {
-    const product = await Product.findByIdAndDelete(req.params.id);
-    if (!product) {
-      res.status(404).json({ error: "Không tìm thấy sản phẩm" } as any);
-      return;
+  async createProduct(req, res): Promise<void> {
+    try {
+      const newProduct = await productService.createProduct(req.body as CreateProductDto);
+      res.status(201).json(newProduct);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
-    res.status(200).json({ message: "Xóa sản phẩm thành công" });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message } as any);
-  }
+  },
+
+  async updateProduct(req, res): Promise<void> {
+    try {
+      const updatedProduct = await productService.updateProduct(
+        req.params.id,
+        req.body as UpdateProductDto
+      );
+      if (!updatedProduct) {
+        res.status(404).json({ error: "Không tìm thấy sản phẩm" });
+        return;
+      }
+      res.status(200).json(updatedProduct);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
+  async deleteProduct(req, res): Promise<void> {
+    try {
+      const success = await productService.deleteProduct(req.params.id);
+      if (!success) {
+        res.status(404).json({ error: "Không tìm thấy sản phẩm" });
+        return;
+      }
+      res.status(200).json({ message: "Xóa sản phẩm thành công" });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  },
 };
