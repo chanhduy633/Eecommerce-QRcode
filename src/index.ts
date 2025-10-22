@@ -8,6 +8,7 @@ import cartRoutes from './routes/cartRoutes';
 import cors from 'cors';
 import uploadRoutes from "./routes/upload";
 import path from "path";
+import { API_VERSION } from './config/apiVersion';
 
 
 dotenv.config();
@@ -33,7 +34,7 @@ app.use(
 
 app.use('/api/auth', authRoutes); 
 app.use("/api/users", userRoutes);
-app.use("/api/products", productRoutes);
+app.use(`/api/${API_VERSION}/products`, productRoutes);
 app.use("/api/cart", cartRoutes);
 
 app.get('/', (req: Request, res: Response) => {
