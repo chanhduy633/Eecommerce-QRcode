@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
-import { ProductRepository } from "../repositories/productRepository";
 import { ProductService } from "../services/productService";
-import { CreateProductDto, UpdateProductDto, IProduct } from "../types/productTypes";
-
-const productRepository = new ProductRepository();
-const productService = new ProductService(productRepository);
+import { ProductRepository } from "../repositories/productRepository";
+import { CreateProductDto, UpdateProductDto } from "../types/productTypes";
 
 // Interface định nghĩa hợp đồng Controller
 export interface IProductController {
@@ -15,20 +12,26 @@ export interface IProductController {
   deleteProduct(req: Request, res: Response): Promise<void>;
 }
 
-// Triển khai Controller
-export const ProductController: IProductController = {
-  async getAllProducts(req, res): Promise<void> {
+//  Triển khai Controller dạng class
+export class ProductController implements IProductController {
+  private service: ProductService;
+
+  constructor(service: ProductService) {
+    this.service = service;
+  }
+
+  async getAllProducts(req: Request, res: Response): Promise<void> {
     try {
-      const products = await productService.getAllProducts();
+      const products = await this.service.getAllProducts();
       res.status(200).json(products);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
-  },
+  }
 
-  async getProductById(req, res): Promise<void> {
+  async getProductById(req: Request, res: Response): Promise<void> {
     try {
-      const product = await productService.getProductById(req.params.id);
+      const product = await this.service.getProductById(req.params.id);
       if (!product) {
         res.status(404).json({ error: "Không tìm thấy sản phẩm" });
         return;
@@ -37,20 +40,20 @@ export const ProductController: IProductController = {
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
-  },
+  }
 
-  async createProduct(req, res): Promise<void> {
+  async createProduct(req: Request, res: Response): Promise<void> {
     try {
-      const newProduct = await productService.createProduct(req.body as CreateProductDto);
+      const newProduct = await this.service.createProduct(req.body as CreateProductDto);
       res.status(201).json(newProduct);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
-  },
+  }
 
-  async updateProduct(req, res): Promise<void> {
+  async updateProduct(req: Request, res: Response): Promise<void> {
     try {
-      const updatedProduct = await productService.updateProduct(
+      const updatedProduct = await this.service.updateProduct(
         req.params.id,
         req.body as UpdateProductDto
       );
@@ -62,11 +65,11 @@ export const ProductController: IProductController = {
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
-  },
+  }
 
-  async deleteProduct(req, res): Promise<void> {
+  async deleteProduct(req: Request, res: Response): Promise<void> {
     try {
-      const success = await productService.deleteProduct(req.params.id);
+      const success = await this.service.deleteProduct(req.params.id);
       if (!success) {
         res.status(404).json({ error: "Không tìm thấy sản phẩm" });
         return;
@@ -75,5 +78,10 @@ export const ProductController: IProductController = {
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
-  },
-};
+  }
+}
+
+// ✅ Khởi tạo controller instance (Dependency Injection)
+const productRepository = new ProductRepository();
+const productService = new ProductService(productRepository);
+export const productController = new ProductController(productService);
