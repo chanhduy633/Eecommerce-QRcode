@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { ProductService } from "../../services/productService";
-import { ProductRepository } from "../../repositories/productRepository";
 import { CreateProductDto, UpdateProductDto } from "../../types/productTypes";
 
 export class ProductControllerV1 {
@@ -59,8 +58,3 @@ export class ProductControllerV1 {
     }
   }
 }
-
-// ✅ Tạo instance
-const repo = new ProductRepository();
-const service = new ProductService(repo);
-export const productControllerV1 = new ProductControllerV1(service);
