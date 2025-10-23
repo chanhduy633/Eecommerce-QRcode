@@ -1,13 +1,10 @@
 import { Router } from "express";
-import { protect, adminOnly } from "../middleware/authMiddleware";
-import { productController } from "../controllers/productController";
+import productRoutesV1 from "./v1/productRoutesV1";
+import productRoutesV2 from "./v2/productRoutesV2";
 
 const router = Router();
 
-router.get("/", (req, res) => productController.getAllProducts(req, res));
-router.get("/:id", (req, res) => productController.getProductById(req, res));
-router.post("/", protect, adminOnly, (req, res) => productController.createProduct(req, res));
-router.put("/:id", protect, adminOnly, (req, res) => productController.updateProduct(req, res));
-router.delete("/:id", protect, adminOnly, (req, res) => productController.deleteProduct(req, res));
+router.use("/v1", productRoutesV1);
+router.use("/v2", productRoutesV2);
 
 export default router;
