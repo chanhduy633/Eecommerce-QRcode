@@ -1,9 +1,6 @@
 import { Request, Response } from "express";
 import { IUserService, CreateUserDto, UpdateUserDto } from "../types/userTypes";
-import { UserRepository } from "../repositories/userRepository";
-import { UserService } from "../services/userService";
 
-// Interface định nghĩa hợp đồng Controller
 export interface IUserController {
   getAllUsers(req: Request, res: Response): Promise<void>;
   getUserById(req: Request, res: Response): Promise<void>;
@@ -12,13 +9,8 @@ export interface IUserController {
   deleteUser(req: Request, res: Response): Promise<void>;
 }
 
-// ✅ Dạng class thay vì object literal
 export class UserController implements IUserController {
-  private service: IUserService;
-
-  constructor(service: IUserService) {
-    this.service = service;
-  }
+  constructor(private service: IUserService) {}
 
   async getAllUsers(req: Request, res: Response): Promise<void> {
     try {
@@ -77,8 +69,3 @@ export class UserController implements IUserController {
     }
   }
 }
-
-// ✅ Khởi tạo instance Controller dùng DI
-const userRepository = new UserRepository();
-const userService = new UserService(userRepository);
-export const userController = new UserController(userService);
