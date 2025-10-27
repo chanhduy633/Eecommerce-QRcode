@@ -1,17 +1,35 @@
 import express from "express";
 import { cartDependencies } from "../app/dependencies";
-
+import { ResponseCode, ResponseHandler } from "../utils/responseHandler";
 
 const router = express.Router();
-
 
 // 🛒 Lấy giỏ hàng người dùng
 router.get("/:userId", async (req, res) => {
   try {
     const result = await cartDependencies.get.execute(req.params.userId);
-    res.status(200).json(result);
+    if (!result) {
+      return res
+        .status(404)
+        .json(
+          ResponseHandler.error(
+            ResponseCode.NOT_FOUND,
+            "Không tìm thấy giỏ hàng"
+          )
+        );
+    }
+    res
+      .status(200)
+      .json(ResponseHandler.success(result, "Lấy giỏ hàng thành công"));
   } catch (e: any) {
-    res.status(400).json({ error: e.message });
+    res
+      .status(500)
+      .json(
+        ResponseHandler.error(
+          ResponseCode.INTERNAL_ERROR,
+          e.message || "Lỗi server"
+        )
+      );
   }
 });
 
@@ -19,45 +37,66 @@ router.get("/:userId", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const result = await cartDependencies.add.execute(req.body);
-    res.status(200).json(result);
+    res
+      .status(200)
+      .json(
+        ResponseHandler.success(result, "Thêm sản phẩm vào giỏ thành công")
+      );
   } catch (e: any) {
-    res.status(400).json({ error: e.message });
+    res
+      .status(400)
+      .json(ResponseHandler.error(ResponseCode.BAD_REQUEST, e.message));
   }
 });
 
-// 🔄 Cập nhật số lượng sản phẩm trong giỏ hàng
+// 🔄 Cập nhật số lượng sản phẩm
 router.put("/", async (req, res) => {
   try {
     const { userId, productId, quantity } = req.body;
-
-    // Ép kiểu quantity về number (vì req.body thường là string)
     const qty = Number(quantity);
 
-    // Kiểm tra dữ liệu hợp lệ
     if (!userId || !productId || isNaN(qty) || qty <= 0) {
       return res
         .status(400)
-        .json({ error: "userId, productId và quantity (số dương) là bắt buộc" });
+        .json(
+          ResponseHandler.error(
+            ResponseCode.BAD_REQUEST,
+            "userId, productId và quantity (số dương) là bắt buộc"
+          )
+        );
     }
 
-    // Gọi use case
-    const result = await cartDependencies.updateQuantity.execute(userId, productId, qty);
-
-    res.status(200).json(result);
+    const result = await cartDependencies.updateQuantity.execute(
+      userId,
+      productId,
+      qty
+    );
+    res
+      .status(200)
+      .json(ResponseHandler.success(result, "Cập nhật số lượng thành công"));
   } catch (e: any) {
-    console.error("Lỗi cập nhật số lượng:", e);
-    res.status(400).json({ error: e.message || "Không thể cập nhật số lượng" });
+    res
+      .status(400)
+      .json(
+        ResponseHandler.error(
+          ResponseCode.BAD_REQUEST,
+          e.message || "Không thể cập nhật số lượng"
+        )
+      );
   }
 });
-
 
 // ❌ Xóa sản phẩm khỏi giỏ
 router.delete("/", async (req, res) => {
   try {
     const result = await cartDependencies.remove.execute(req.body);
-    res.status(200).json(result);
+    res
+      .status(200)
+      .json(ResponseHandler.success(result, "Xóa sản phẩm thành công"));
   } catch (e: any) {
-    res.status(400).json({ error: e.message });
+    res
+      .status(400)
+      .json(ResponseHandler.error(ResponseCode.BAD_REQUEST, e.message));
   }
 });
 
@@ -65,9 +104,13 @@ router.delete("/", async (req, res) => {
 router.delete("/:userId/clear", async (req, res) => {
   try {
     await cartDependencies.clear.execute(req.params.userId);
-    res.status(200).json({ message: "Đã xóa toàn bộ giỏ hàng" });
+    res
+      .status(200)
+      .json(ResponseHandler.success(null, "Đã xóa toàn bộ giỏ hàng"));
   } catch (e: any) {
-    res.status(400).json({ error: e.message });
+    res
+      .status(400)
+      .json(ResponseHandler.error(ResponseCode.BAD_REQUEST, e.message));
   }
 });
 

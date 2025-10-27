@@ -1,21 +1,19 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
 import { adminLoginUseCase } from "../app/dependencies";
+import { ResponseCode, ResponseHandler } from "../utils/responseHandler";
 
 const router = Router();
 
-router.post("/admin/login", async (req: Request, res: Response) => {
+router.post("/admin/login", async (req, res) => {
   try {
     const result = await adminLoginUseCase.execute(req.body);
-    res.status(200).json(result);
-  } catch (error: any) {
-    console.error("Lỗi khi đăng nhập admin:", error);
-    if (
-      error.message === "Thông tin đăng nhập không hợp lệ" ||
-      error.message === "Chỉ admin mới được phép truy cập"
-    ) {
-      res.status(401).json({ message: error.message });
+    res.json(ResponseHandler.success(result, "Đăng nhập thành công"));
+  } catch (err: any) {
+    if (err.message === "Thông tin đăng nhập không hợp lệ" ||
+        err.message === "Chỉ admin mới được phép truy cập") {
+      res.status(401).json(ResponseHandler.error(ResponseCode.UNAUTHORIZED, err.message));
     } else {
-      res.status(500).json({ message: "Lỗi server nội bộ" });
+      res.status(500).json(ResponseHandler.error(ResponseCode.INTERNAL_ERROR, "Lỗi server nội bộ"));
     }
   }
 });
