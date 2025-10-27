@@ -1,7 +1,7 @@
 // middleware/authMiddleware.ts
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/User";
+import User from "../repositories/models/User";
 import { IUserDocument } from "../types/userTypes";
 
 interface JwtPayload {

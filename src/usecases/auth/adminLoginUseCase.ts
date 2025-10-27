@@ -1,15 +1,22 @@
-// src/services/authService.ts
 import bcrypt from "bcryptjs";
-import { generateToken } from "../config/jwt";
-import { IAuthRepository, LoginDto, AdminLoginResponse } from "../types/authTypes";
+import { generateToken } from "../../config/jwt";
+import {
+  IAuthRepository,
+  LoginDto,
+  AdminLoginResponse,
+} from "../../types/authTypes";
 
-export class AuthService {
-  constructor(private readonly repository: IAuthRepository) {}
+export class AdminLoginUseCase {
+  private readonly repository: IAuthRepository;
 
-  async adminLogin(data: LoginDto): Promise<AdminLoginResponse> {
+  constructor(repository: IAuthRepository) {
+    this.repository = repository;
+  }
+
+  async execute(data: LoginDto): Promise<AdminLoginResponse> {
     const { email, password } = data;
-    const user = await this.repository.findByEmail(email);
 
+    const user = await this.repository.findByEmail(email);
     if (!user) {
       throw new Error("Thông tin đăng nhập không hợp lệ");
     }

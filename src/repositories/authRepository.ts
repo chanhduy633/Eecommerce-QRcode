@@ -1,5 +1,5 @@
 // src/repositories/authRepository.ts
-import User from "../models/User";
+import User from "./models/User";
 import { IAuthRepository } from "../types/authTypes";
 import { IUserDocument } from "../types/userTypes";
 

@@ -1,25 +1,52 @@
-import Cart from "../models/Cart";
-import { CartType } from "../types/cartTypes";
+// src/repositories/cartRepository.ts
+import { ICartRepository, CartType } from "../types/cartTypes";
+import Cart from "./models/Cart";
 
-export class CartRepository {
-  async findByUserId(userId: string) {
-    return await Cart.findOne({ userId }).populate("items.productId");
+export class CartRepository implements ICartRepository {
+  async findByUserId(userId: string): Promise<CartType | null> {
+    const doc = await Cart.findOne({ userId }).populate("items.productId");
+    if (!doc) return null;
+    return this.toDomain(doc);
   }
 
-  async create(userId: string) {
-    const cart = new Cart({ userId, items: [] });
-    return await cart.save();
+  async create(userId: string): Promise<CartType> {
+    const doc = await Cart.create({ userId, items: [] });
+    return this.toDomain(doc);
   }
 
-  async save(cart: any) {
-    return await cart.save();
+  async save(cart: CartType): Promise<CartType> {
+    const doc = await Cart.findOneAndUpdate(
+      { userId: cart.userId },
+      { items: cart.items },
+      { new: true, upsert: true }
+    ).populate("items.productId");
+    return this.toDomain(doc);
   }
 
-  async updateItems(userId: string, items: any[]) {
-    return await Cart.findOneAndUpdate({ userId }, { items }, { new: true }).populate("items.productId");
+  async deleteCart(userId: string): Promise<void> {
+    await Cart.deleteOne({ userId });
   }
 
-  async clearCart(userId: string) {
-    return await Cart.findOneAndUpdate({ userId }, { items: [] }, { new: true });
+  // 🧩 Helper chuyển từ Mongo Document sang Domain Entity
+  private toDomain(doc: any): CartType {
+    return {
+      _id: doc._id.toString(),
+      userId: doc.userId.toString(),
+      items: doc.items.map((i: any) => ({
+        productId: i.productId?._id?.toString() ?? i.productId,
+        quantity: i.quantity,
+        addedAt: i.addedAt,
+        product: i.productId && typeof i.productId === "object"
+          ? {
+              _id: i.productId._id.toString(),
+              name: i.productId.name,
+              price: i.productId.price,
+              image: i.productId.image,
+            }
+          : undefined,
+      })),
+      createdAt: doc.createdAt?.toISOString(),
+      updatedAt: doc.updatedAt?.toISOString(),
+    };
   }
 }

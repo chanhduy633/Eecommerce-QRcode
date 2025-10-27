@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IProductDoc } from "../types/productTypes";
+import { IProductDoc } from "../../types/productTypes";
 const productSchema = new mongoose.Schema<IProductDoc>(
   {
     name: {

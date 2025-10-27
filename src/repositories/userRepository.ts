@@ -1,11 +1,19 @@
-import User from "../models/User";
+import User from "./models/User";
 import bcrypt from "bcryptjs";
 import {
-  IUserRepository,
   IUserDocument,
   CreateUserDto,
   UpdateUserDto,
 } from "../types/userTypes";
+
+export interface IUserRepository {
+  findAll(): Promise<IUserDocument[]>;
+  findById(id: string): Promise<IUserDocument | null>;
+  findByEmail(email: string): Promise<IUserDocument | null>;
+  create(data: CreateUserDto): Promise<IUserDocument>;
+  update(id: string, data: UpdateUserDto): Promise<IUserDocument | null>;
+  delete(id: string): Promise<IUserDocument | null>;
+}
 
 export class UserRepository implements IUserRepository {
   async findAll(): Promise<IUserDocument[]> {

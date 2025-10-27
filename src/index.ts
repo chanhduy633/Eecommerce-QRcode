@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
 import authRoutes from './routes/authRoutes'; 
-import productRoutes from './routes/productRoutes'
+import  { createProductRouter } from './routes/productRoutes'
 import userRoutes from './routes/userRoutes';
 import cartRoutes from './routes/cartRoutes';
 import cors from 'cors';
@@ -34,7 +34,8 @@ app.use(
 
 app.use('/api/auth', authRoutes); 
 app.use("/api/users", userRoutes);
-app.use("/api/products", productRoutes);
+app.use("/api/v1/products", createProductRouter("v1"));
+app.use("/api/v2/products", createProductRouter("v2"));
 app.use("/api/cart", cartRoutes);
 
 app.get('/', (req: Request, res: Response) => {
