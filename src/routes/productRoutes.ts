@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { productDependencies } from "../app/dependencies";
 import { protect, adminOnly } from "../middleware/authMiddleware";
-import { ResponseCode, ResponseHandler } from "../utils/responseHandler";
+import { ResponseCode, ResponseHandler } from "../untils/responseHandler";
 
 export const createProductRouter = (version: "v1" | "v2" = "v1") => {
   const router = Router();

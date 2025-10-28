@@ -49,15 +49,7 @@ export interface UserResponse {
   createdAt: string;
   updatedAt: string;
 }
-// ------------------ Repository ------------------
-export interface IUserRepository {
-  findAll(): Promise<IUserDocument[]>;
-  findById(id: string): Promise<IUserDocument | null>;
-  findByEmail(email: string): Promise<IUserDocument | null>;
-  create(data: CreateUserDto): Promise<IUserDocument>;
-  update(id: string, data: UpdateUserDto): Promise<IUserDocument | null>;
-  delete(id: string): Promise<IUserDocument | null>;
-}
+
 
 // ------------------ Service ------------------
 export interface IUserService {

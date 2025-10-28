@@ -10,8 +10,8 @@ export interface CartItemType {
   product?: {
     _id: string;
     name: string;
-    price: number;
     image?: string;
+    price: number;
   };
 }
 

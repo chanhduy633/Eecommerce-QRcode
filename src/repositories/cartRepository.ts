@@ -1,4 +1,3 @@
-// src/repositories/cartRepository.ts
 import { ICartRepository, CartType } from "../types/cartTypes";
 import Cart from "./models/Cart";
 
@@ -41,7 +40,7 @@ export class CartRepository implements ICartRepository {
               _id: i.productId._id.toString(),
               name: i.productId.name,
               price: i.productId.price,
-              image: i.productId.image,
+              image: i.productId.image_url,
             }
           : undefined,
       })),

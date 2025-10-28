@@ -1,6 +1,6 @@
 import express from "express";
 import { userDependencies } from "../app/dependencies";
-import { ResponseCode, ResponseHandler } from "../utils/responseHandler";
+import { ResponseCode, ResponseHandler } from "../untils/responseHandler";
 
 const router = express.Router();
 

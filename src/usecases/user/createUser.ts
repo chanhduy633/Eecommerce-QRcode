@@ -1,4 +1,5 @@
-import { CreateUserDto, IUserRepository, UserResponse } from "../../types/userTypes";
+import { IUserRepository } from "../../repositories/userRepository";
+import { CreateUserDto, UserResponse } from "../../types/userTypes";
 
 export class CreateUser {
   constructor(private readonly repo: IUserRepository) {}
