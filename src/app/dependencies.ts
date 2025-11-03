@@ -1,4 +1,4 @@
-import { AuthRepository } from "../repositories/authRepository";
+import { AuthAdminRepository } from "../repositories/authAdminRepository";
 import { AdminLoginUseCase } from "../usecases/auth/adminLoginUseCase";
 import { UserRepository } from "../repositories/userRepository";
 import { ProductRepository } from "../repositories/productRepository";
@@ -20,7 +20,18 @@ import { DeleteProduct } from "../usecases/product/deleteProduct";
 import { GetAllProductsV1 } from "../usecases/product/getAllProductsV1";
 import { GetAllProductsV2 } from "../usecases/product/getAllProductsV2";
 
-const authRepository = new AuthRepository();
+// 🧠 AUTH DEPENDENCIES (User Auth)
+import { AuthUserRepository } from "../repositories/authUserRepository";
+import { LoginUser } from "../usecases/userlogin/loginUser";
+import { RegisterUser } from "../usecases/userlogin/registerUser";
+import { LoginWithGoogle } from "../usecases/userlogin/loginWithGoogle";
+import { ForgotPassword } from "../usecases/userlogin/forgotPassword";
+
+const authUserRepository = new AuthUserRepository();
+
+
+
+const authRepository = new AuthAdminRepository();
 const adminLoginUseCase = new AdminLoginUseCase(authRepository);
 
 const userRepository = new UserRepository();
@@ -70,3 +81,9 @@ export const cartDependencies = {
   clear: new ClearCart(cartRepository),
 };
 
+export const authDependencies = {
+  login: new LoginUser(authUserRepository),
+  register: new RegisterUser(authUserRepository),
+  loginWithGoogle: new LoginWithGoogle(authUserRepository),
+  forgotPassword: new ForgotPassword(authUserRepository),
+};

@@ -1,4 +1,4 @@
-import { ICartRepository } from "../../types/cartTypes";
+import { ICartRepository } from "../../repositories/cartRepository";
 
 export class ClearCart {
   constructor(private readonly repo: ICartRepository) {}

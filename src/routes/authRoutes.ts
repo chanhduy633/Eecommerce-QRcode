@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { adminLoginUseCase } from "../app/dependencies";
-import { ResponseCode, ResponseHandler } from "../untils/responseHandler";
+import { ResponseCode, ResponseHandler } from "../utils/responseHandler";
 
 const router = Router();
 

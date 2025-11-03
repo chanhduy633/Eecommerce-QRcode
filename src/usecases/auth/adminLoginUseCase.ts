@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
 import { generateToken } from "../../config/jwt";
 import {
-  IAuthRepository,
   LoginDto,
   AdminLoginResponse,
 } from "../../types/authTypes";
+import { IAuthRepository } from "../../repositories/authAdminRepository";
 
 export class AdminLoginUseCase {
   private readonly repository: IAuthRepository;

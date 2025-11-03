@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { API_ROUTES } from "../config/api";
 
 const router = express.Router();
 
@@ -44,7 +45,7 @@ router.post("/", upload.single("image"), (req: Request, res: Response) => {
     }
 
     // URL truy cập ảnh (nếu dùng static server)
-    const imageUrl = `http://localhost:5317/uploads/products/${req.file.filename}`;
+    const imageUrl = `${API_ROUTES.UPLOAD}/${req.file.filename}`;
 
     return res.status(200).json({
       url: imageUrl,

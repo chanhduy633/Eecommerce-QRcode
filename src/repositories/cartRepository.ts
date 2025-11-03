@@ -1,5 +1,12 @@
-import { ICartRepository, CartType } from "../types/cartTypes";
+import { CartType } from "../types/cartTypes";
 import Cart from "./models/Cart";
+
+export interface ICartRepository {
+  findByUserId(userId: string): Promise<CartType | null>;
+  create(userId: string): Promise<CartType>;
+  save(cart: CartType): Promise<CartType>;
+  deleteCart(userId: string): Promise<void>;
+}
 
 export class CartRepository implements ICartRepository {
   async findByUserId(userId: string): Promise<CartType | null> {

@@ -51,11 +51,3 @@ export interface UserResponse {
 }
 
 
-// ------------------ Service ------------------
-export interface IUserService {
-  getAll(): Promise<UserResponse[]>;
-  getById(id: string): Promise<UserResponse | null>;
-  create(data: CreateUserDto): Promise<UserResponse>;
-  update(id: string, data: UpdateUserDto): Promise<UserResponse | null>;
-  delete(id: string): Promise<boolean>;
-}

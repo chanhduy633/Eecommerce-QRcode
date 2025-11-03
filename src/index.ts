@@ -2,12 +2,15 @@ import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
 import authRoutes from './routes/authRoutes'; 
+import authGoogleRoutes from './routes/authGoogleRoutes'; 
+import authUserRoutes from './routes/authUserRoutes'; 
 import  { createProductRouter } from './routes/productRoutes'
 import userRoutes from './routes/userRoutes';
 import cartRoutes from './routes/cartRoutes';
 import cors from 'cors';
 import uploadRoutes from "./routes/upload";
 import path from "path";
+import passport from './config/passport';
 
 
 
@@ -32,7 +35,11 @@ app.use(
   express.static(path.join(process.cwd(), "uploads"))
 );
 
-app.use('/api/auth', authRoutes); 
+app.use(passport.initialize());
+
+app.use('/api/auth', authRoutes);
+app.use("/api/auth/oauth", authGoogleRoutes);
+app.use('/api/auth/user', authUserRoutes); 
 app.use("/api/users", userRoutes);
 app.use("/api/v1/products", createProductRouter("v1"));
 app.use("/api/v2/products", createProductRouter("v2"));

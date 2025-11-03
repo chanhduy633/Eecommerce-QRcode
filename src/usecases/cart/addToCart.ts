@@ -1,5 +1,6 @@
 // src/usecases/cart/addToCart.usecase.ts
-import { ICartRepository, AddToCartDto, CartType } from "../../types/cartTypes";
+import { ICartRepository } from "../../repositories/cartRepository";
+import {  AddToCartDto, CartType } from "../../types/cartTypes";
 
 export class AddToCart {
   constructor(private readonly repo: ICartRepository) {}

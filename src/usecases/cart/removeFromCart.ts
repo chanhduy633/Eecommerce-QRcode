@@ -1,4 +1,5 @@
-import { ICartRepository, CartType } from "../../types/cartTypes";
+import { ICartRepository } from "../../repositories/cartRepository";
+import {  CartType } from "../../types/cartTypes";
 
 interface RemoveParams {
   userId: string;

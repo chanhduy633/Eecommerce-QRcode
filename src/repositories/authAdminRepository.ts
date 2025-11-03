@@ -1,9 +1,12 @@
-// src/repositories/authRepository.ts
 import User from "./models/User";
-import { IAuthRepository } from "../types/authTypes";
 import { IUserDocument } from "../types/userTypes";
 
-export class AuthRepository implements IAuthRepository {
+// Repository interface
+export interface IAuthRepository {
+  findByEmail(email: string): Promise<IUserDocument | null>;
+}
+
+export class AuthAdminRepository implements IAuthRepository {
   async findByEmail(email: string): Promise<IUserDocument | null> {
     return await User.findOne({ email });
   }
