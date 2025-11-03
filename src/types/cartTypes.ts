@@ -37,13 +37,3 @@ export interface UpdateQuantityDto {
   productId: string;
   quantity: number;
 }
-
-// ------------------------------
-// 🧱 REPOSITORY CONTRACT (Interface)
-// ------------------------------
-export interface ICartRepository {
-  findByUserId(userId: string): Promise<CartType | null>;
-  create(userId: string): Promise<CartType>;
-  save(cart: CartType): Promise<CartType>;
-  deleteCart(userId: string): Promise<void>;
-}

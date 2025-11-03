@@ -19,7 +19,3 @@ export interface AdminLoginResponse {
   };
 }
 
-// Repository interface
-export interface IAuthRepository {
-  findByEmail(email: string): Promise<IUserDocument | null>;
-}
