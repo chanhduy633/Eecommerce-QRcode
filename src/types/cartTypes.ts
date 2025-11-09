@@ -12,6 +12,7 @@ export interface CartItemType {
     name: string;
     image?: string;
     price: number;
+    stock: number;
   };
 }
 

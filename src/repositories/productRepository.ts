@@ -1,5 +1,6 @@
 import Product from "./models/Product";
 import { CreateProductDto, UpdateProductDto, IProductDoc } from "../types/productTypes";
+import { Types } from "mongoose";
 
 // Interface định nghĩa hợp đồng Repository
 export interface IProductRepository {
@@ -34,5 +35,11 @@ export class ProductRepository implements IProductRepository {
 
   async delete(id: string): Promise<IProductDoc | null> {
     return await Product.findByIdAndDelete(id);
+  }
+  
+  async decreaseStock(productId: Types.ObjectId, quantity: number) {
+    return Product.findByIdAndUpdate(productId, {
+      $inc: { stock: -quantity },
+    });
   }
 }

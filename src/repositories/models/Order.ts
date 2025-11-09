@@ -1,62 +1,55 @@
 import mongoose from "mongoose";
+import { email } from "zod";
 
 const orderSchema = new mongoose.Schema(
   {
-    orderNumber: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+    orderNumber: { type: String, required: true, unique: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    guestId: { type: String, default: null },
     items: [
       {
-        productId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Product",
-          required: true,
-        },
-        name: { type: String, required: true },
-        price: { type: Number, required: true, min: 0 },
-        quantity: { type: Number, required: true, min: 1 },
-        image: { type: String },
+        productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
+        name: String,
+        price: Number,
+        quantity: Number,
+        image: String,
       },
     ],
-    totalAmount: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    shippingFee: {
-      type: Number,
-      required: true,
-      min: 0,
-      default: 0,
-    },
-    finalAmount: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
+    totalAmount: Number,
+    shippingFee: Number,
+    finalAmount: Number,
     shippingAddress: {
-      name: { type: String, required: true }, // Người nhận
+      name: { type: String, required: true },
+      email: { type: String, required: true },
+
       phone: { type: String, required: true },
       street: { type: String, required: true },
       city: { type: String, required: true },
       district: { type: String, required: true },
       ward: { type: String, required: true },
     },
+
+    // 🧾 Thông tin thanh toán
+    payment: {
+      method: {
+        type: String,
+        enum: ["COD", "BANK_TRANSFER", "MOMO", "VNPAY", "ZALOPAY"],
+        required: true,
+      },
+      status: {
+        type: String,
+        enum: ["pending", "paid", "failed", "refunded"],
+        default: "pending",
+      },
+      transactionId: { type: String },
+    },
+
     status: {
       type: String,
-      enum: ["pending", "confirmed", "shipped", "delivered", "cancelled"],
+      enum: ["pending", "confirmed", "shipping", "delivered", "cancelled"],
       default: "pending",
     },
-    notes: {
-      type: String,
-    },
+    notes: String,
   },
   { timestamps: true }
 );

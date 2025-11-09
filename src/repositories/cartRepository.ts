@@ -48,6 +48,7 @@ export class CartRepository implements ICartRepository {
               name: i.productId.name,
               price: i.productId.price,
               image: i.productId.image_url,
+              stock: i.productId.stock ?? 0,
             }
           : undefined,
       })),

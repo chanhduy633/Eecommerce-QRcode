@@ -7,6 +7,7 @@ import authUserRoutes from './routes/authUserRoutes';
 import  { createProductRouter } from './routes/productRoutes'
 import userRoutes from './routes/userRoutes';
 import cartRoutes from './routes/cartRoutes';
+import orderRoutes from './routes/orderRoutes';
 import cors from 'cors';
 import uploadRoutes from "./routes/upload";
 import path from "path";
@@ -44,6 +45,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/v1/products", createProductRouter("v1"));
 app.use("/api/v2/products", createProductRouter("v2"));
 app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello from Express + TypeScript + MongoDB!' });
