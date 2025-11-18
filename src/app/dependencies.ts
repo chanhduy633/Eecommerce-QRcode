@@ -45,6 +45,7 @@ import { ClearCart } from "../usecases/cart/clearCart";
 
 // --- Order Management ---
 import { CreateOrderUseCase } from "../usecases/order/createOrderUseCase";
+import { SendEmailUseCase } from "../usecases/order/sendEmail";
 
 
 // ========================
@@ -120,5 +121,5 @@ export const authDependencies = {
 
 // --- Order ---
 export const orderDependencies = {
-  create: new CreateOrderUseCase(cartRepository, productRepository, orderRepository),
+  create: new CreateOrderUseCase(cartRepository, productRepository, orderRepository, new SendEmailUseCase()),
 };
