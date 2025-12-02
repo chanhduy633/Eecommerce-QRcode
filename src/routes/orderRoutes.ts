@@ -126,4 +126,39 @@ router.put("/:id/status", async (req, res) => {
     res.status(500).json(ResponseHandler.error(ResponseCode.INTERNAL_ERROR, error.message));
   }
 });
+
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const order = await Order.findByIdAndDelete(req.params.id);
+    
+    if (!order) {
+      return res
+        .status(404)
+        .json(
+          ResponseHandler.error(
+            ResponseCode.NOT_FOUND,
+            "Không tìm thấy đơn hàng"
+          )
+        );
+    }
+
+    res
+      .status(200)
+      .json(
+        ResponseHandler.success(
+          { _id: order._id },
+          "Xóa đơn hàng thành công!"
+        )
+      );
+  } catch (error: any) {
+    console.error("❌ DELETE /orders/:id error:", error);
+    res
+      .status(500)
+      .json(
+        ResponseHandler.error(ResponseCode.INTERNAL_ERROR, error.message)
+      );
+  }
+});
+
 export default router;
