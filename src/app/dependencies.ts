@@ -7,6 +7,8 @@ import { UserRepository } from "../repositories/userRepository";
 import { ProductRepository } from "../repositories/productRepository";
 import { CartRepository } from "../repositories/cartRepository";
 import { OrderRepository } from "../repositories/orderRepository";
+import { CategoryRepository } from "../repositories/categoryRepository";
+
 
 // ========================
 // IMPORT USECASES
@@ -47,6 +49,15 @@ import { ClearCart } from "../usecases/cart/clearCart";
 import { CreateOrderUseCase } from "../usecases/order/createOrderUseCase";
 import { SendEmailUseCase } from "../usecases/order/sendEmail";
 
+// ---Category Management---
+import { CreateCategoryUseCase } from "../usecases/category/createCategory";
+import { UpdateCategoryUseCase } from "../usecases/category/updateCategory";
+import { DeleteCategoryUseCase } from "../usecases/category/deleteCategory";
+import {
+  GetCategoriesUseCase,
+  GetCategoryByIdUseCase,
+  GetCategoryBySlugUseCase,
+} from "../usecases/category/getCategories";
 
 // ========================
 // INITIALIZE REPOSITORIES
@@ -57,6 +68,7 @@ const userRepository = new UserRepository();
 const productRepository = new ProductRepository();
 const cartRepository = new CartRepository();
 const orderRepository = new OrderRepository();
+const categoryRepository = new CategoryRepository();
 
 
 // ========================
@@ -122,4 +134,13 @@ export const authDependencies = {
 // --- Order ---
 export const orderDependencies = {
   create: new CreateOrderUseCase(cartRepository, productRepository, orderRepository, new SendEmailUseCase()),
+};
+// --- category  ---
+export const categoryDependencies = {
+  create: new CreateCategoryUseCase(categoryRepository),
+  update: new UpdateCategoryUseCase(categoryRepository),
+  delete: new DeleteCategoryUseCase(categoryRepository),
+  getAll: new GetCategoriesUseCase(categoryRepository),
+  getById: new GetCategoryByIdUseCase(categoryRepository),
+  getBySlug: new GetCategoryBySlugUseCase(categoryRepository),
 };

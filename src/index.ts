@@ -6,6 +6,7 @@ import authGoogleRoutes from './routes/authGoogleRoutes';
 import authUserRoutes from './routes/authUserRoutes'; 
 import  { createProductRouter } from './routes/productRoutes'
 import userRoutes from './routes/userRoutes';
+import categoryRoutes from './routes/categoryRoutes';
 import cartRoutes from './routes/cartRoutes';
 import orderRoutes from './routes/orderRoutes';
 import paymentRoutes from './routes/paymentRoutes';
@@ -45,6 +46,7 @@ app.use('/api/auth/user', authUserRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/v1/products", createProductRouter("v1"));
 app.use("/api/v2/products", createProductRouter("v2"));
+app.use("/api/categories", categoryRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payment", paymentRoutes);

@@ -79,7 +79,7 @@ export class SendEmailUseCase {
     `;
 
     const mailOptions = {
-      from: `"Your Store" <${process.env.EMAIL_USER}>`,
+      from: `"Tech Store" <${process.env.EMAIL_USER}>`,
       to: data.email,
       subject: `Xác nhận đơn hàng #${data.orderNumber}`,
       html: htmlContent,
