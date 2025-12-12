@@ -37,6 +37,19 @@ const productSchema = new mongoose.Schema<IProductDoc>(
   { timestamps: true }
 );
 
+// Middleware để xóa specification khi xóa product
+productSchema.pre('findOneAndDelete', async function(next) {
+  const productId = this.getQuery()["_id"];
+  await mongoose.model('ProductSpecification').deleteOne({ product: productId });
+  next();
+});
+
+productSchema.pre('deleteOne', async function(next) {
+  const productId = this.getQuery()["_id"];
+  await mongoose.model('ProductSpecification').deleteOne({ product: productId });
+  next();
+});
+
 const Product = mongoose.model<IProductDoc>("Product", productSchema);
 
 export default Product;

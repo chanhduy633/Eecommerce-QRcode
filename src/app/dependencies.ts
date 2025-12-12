@@ -8,7 +8,7 @@ import { ProductRepository } from "../repositories/productRepository";
 import { CartRepository } from "../repositories/cartRepository";
 import { OrderRepository } from "../repositories/orderRepository";
 import { CategoryRepository } from "../repositories/categoryRepository";
-
+import { ProductSpecificationRepository } from "../repositories/SpecificationRepository";
 
 // ========================
 // IMPORT USECASES
@@ -59,6 +59,12 @@ import {
   GetCategoryBySlugUseCase,
 } from "../usecases/category/getCategories";
 
+// --- Product Specification ---
+import { CreateProductSpecificationUseCase } from "../usecases/specification/CreateProductSpecificationUseCase";
+import { GetProductSpecificationUseCase } from "../usecases/specification/GetProductSpecificationUseCase";
+import { UpdateProductSpecificationUseCase } from "../usecases/specification/UpdateProductSpecificationUseCase";
+import { DeleteProductSpecificationUseCase } from "../usecases/specification/DeleteProductSpecificationUseCase";
+
 // ========================
 // INITIALIZE REPOSITORIES
 // ========================
@@ -69,10 +75,10 @@ const productRepository = new ProductRepository();
 const cartRepository = new CartRepository();
 const orderRepository = new OrderRepository();
 const categoryRepository = new CategoryRepository();
-
+const productSpecificationRepository = new ProductSpecificationRepository();
 
 // ========================
-//USECASE INSTANCES
+// USECASE INSTANCES
 // ========================
 
 // --- Admin Auth ---
@@ -86,14 +92,25 @@ const commonUseCases = {
   delete: new DeleteProduct(productRepository),
 };
 
+// --- Product Specification ---
+const createProductSpecification = new CreateProductSpecificationUseCase(
+  productSpecificationRepository
+);
+const updateProductSpecification = new UpdateProductSpecificationUseCase(
+  productSpecificationRepository
+);
+const getProductSpecification = new GetProductSpecificationUseCase(
+  productSpecificationRepository
+);
+const deleteProductSpecification = new DeleteProductSpecificationUseCase(
+  productSpecificationRepository
+);
 
 // ========================
 // EXPORT DEPENDENCIES
 // ========================
-
 export { adminLoginUseCase };
 
-// --- User ---
 export const userDependencies = {
   getAllUsers: new GetAllUsers(userRepository),
   getUserById: new GetUserById(userRepository),
@@ -102,7 +119,6 @@ export const userDependencies = {
   deleteUser: new DeleteUser(userRepository),
 };
 
-// --- Product ---
 export const productDependencies = {
   v1: {
     ...commonUseCases,
@@ -114,7 +130,6 @@ export const productDependencies = {
   },
 };
 
-// --- Cart ---
 export const cartDependencies = {
   add: new AddToCart(cartRepository),
   get: new GetCart(cartRepository),
@@ -123,7 +138,6 @@ export const cartDependencies = {
   clear: new ClearCart(cartRepository),
 };
 
-// --- Auth (User) ---
 export const authDependencies = {
   login: new LoginUser(authUserRepository),
   register: new RegisterUser(authUserRepository),
@@ -131,11 +145,15 @@ export const authDependencies = {
   forgotPassword: new ForgotPassword(authUserRepository),
 };
 
-// --- Order ---
 export const orderDependencies = {
-  create: new CreateOrderUseCase(cartRepository, productRepository, orderRepository, new SendEmailUseCase()),
+  create: new CreateOrderUseCase(
+    cartRepository,
+    productRepository,
+    orderRepository,
+    new SendEmailUseCase()
+  ),
 };
-// --- category  ---
+
 export const categoryDependencies = {
   create: new CreateCategoryUseCase(categoryRepository),
   update: new UpdateCategoryUseCase(categoryRepository),
@@ -143,4 +161,12 @@ export const categoryDependencies = {
   getAll: new GetCategoriesUseCase(categoryRepository),
   getById: new GetCategoryByIdUseCase(categoryRepository),
   getBySlug: new GetCategoryBySlugUseCase(categoryRepository),
+};
+
+// --- Product Specification ---
+export const specificationDependencies = {
+  create: createProductSpecification,
+  update: updateProductSpecification,
+  get: getProductSpecification,
+  delete: deleteProductSpecification,
 };

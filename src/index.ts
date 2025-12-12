@@ -7,6 +7,7 @@ import authUserRoutes from './routes/authUserRoutes';
 import  { createProductRouter } from './routes/productRoutes'
 import userRoutes from './routes/userRoutes';
 import categoryRoutes from './routes/categoryRoutes';
+import specificationRoutes from './routes/specificationRoutes';
 import cartRoutes from './routes/cartRoutes';
 import orderRoutes from './routes/orderRoutes';
 import paymentRoutes from './routes/paymentRoutes';
@@ -47,6 +48,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/v1/products", createProductRouter("v1"));
 app.use("/api/v2/products", createProductRouter("v2"));
 app.use("/api/categories", categoryRoutes);
+app.use("/api/specifications", specificationRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payment", paymentRoutes);
