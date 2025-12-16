@@ -15,7 +15,7 @@ import cors from 'cors';
 import uploadRoutes from "./routes/upload";
 import path from "path";
 import passport from './config/passport';
-
+import chatRoutes from './routes/chatRoutes';
 
 
 dotenv.config();
@@ -52,6 +52,7 @@ app.use("/api/specifications", specificationRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use('/api/chat', chatRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello from Express + TypeScript + MongoDB!' });
