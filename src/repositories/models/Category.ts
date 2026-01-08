@@ -37,9 +37,9 @@ const categorySchema = new Schema<ICategory>(
 );
 
 // Index cho tìm kiếm
-categorySchema.index({ name: "text", description: "text" });
-categorySchema.index({ slug: 1 });
-categorySchema.index({ isActive: 1 });
+// categorySchema.index({ name: "text", description: "text" });
+// categorySchema.index({ slug: 1 });
+// categorySchema.index({ isActive: 1 });
 
 // Helper để tạo slug từ name
 categorySchema.pre("save", function (next) {
