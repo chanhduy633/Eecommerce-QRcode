@@ -1,57 +1,63 @@
+// routes/upload.ts (hoặc tên file upload của bạn)
 import express, { Request, Response } from "express";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
-import { API_ROUTES } from "../config/api";
+import { createClient } from "@supabase/supabase-js";
 
 const router = express.Router();
 
-// Thư mục lưu ảnh
-const UPLOAD_DIR = path.join(process.cwd(), "uploads", "products");
+// Khởi tạo Supabase với service_role key
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
-// Tạo thư mục nếu chưa tồn tại
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-}
-
-// Cấu hình multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, UPLOAD_DIR);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const ext = path.extname(file.originalname);
-    cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-  },
-});
-
+// Multer lưu file vào memory (RAM)
 const upload = multer({
-  storage,
-  limits: { fileSize: 1024 * 1024 }, // Giới hạn 1MB
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // Max 5MB
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith("image/")) {
-      return cb(new Error("Vui lòng tải lên file ảnh"));
+      return cb(new Error("Chỉ chấp nhận file ảnh"));
     }
     cb(null, true);
   },
 });
 
-// API Upload ảnh
-router.post("/", upload.single("image"), (req: Request, res: Response) => {
+// API Upload
+router.post("/", upload.single("image"), async (req: Request, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "Không có file được tải lên" });
     }
 
-    // Chỉ trả về tên file, không phải full URL
+    // Tạo tên file unique
+    const timestamp = Date.now();
+    const random = Math.round(Math.random() * 1e9);
+    const ext = req.file.originalname.split(".").pop();
+    const fileName = `image-${timestamp}-${random}.${ext}`;
+
+    // Upload lên Supabase Storage
+    const { data, error } = await supabase.storage
+      .from("products") // Tên bucket
+      .upload(fileName, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: false,
+      });
+
+    if (error) {
+      console.error("Supabase error:", error);
+      throw error;
+    }
+
+    // Trả về TÊN FILE (không phải URL đầy đủ)
     return res.status(200).json({
-      url: req.file.filename,  // Chỉ trả về tên file
-      filename: req.file.filename,
+      url: fileName,
+      filename: fileName,
     });
   } catch (error) {
     console.error("Upload error:", error);
     return res.status(500).json({ message: "Upload ảnh thất bại" });
   }
 });
+
 export default router;
