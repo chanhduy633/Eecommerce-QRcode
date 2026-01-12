@@ -44,11 +44,9 @@ router.post("/", upload.single("image"), (req: Request, res: Response) => {
       return res.status(400).json({ message: "Không có file được tải lên" });
     }
 
-    // URL truy cập ảnh (nếu dùng static server)
-    const imageUrl = `${API_ROUTES.UPLOAD}/${req.file.filename}`;
-
+    // Chỉ trả về tên file, không phải full URL
     return res.status(200).json({
-      url: imageUrl,
+      url: req.file.filename,  // Chỉ trả về tên file
       filename: req.file.filename,
     });
   } catch (error) {
@@ -56,5 +54,4 @@ router.post("/", upload.single("image"), (req: Request, res: Response) => {
     return res.status(500).json({ message: "Upload ảnh thất bại" });
   }
 });
-
 export default router;
